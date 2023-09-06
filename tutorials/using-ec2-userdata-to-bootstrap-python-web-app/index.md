@@ -35,7 +35,7 @@ Manually setting up and configuring the packages required to run a Python web ap
 | 🧩 Prerequisites       | - [AWS account](https://aws.amazon.com/resources/create-account/?sc_channel=el&sc_campaign=devopswave&sc_content=cicdcdkpthnec2aws&sc_geo=mult&sc_country=mult&sc_outcome=acq)<br>-CDK installed: Visit [Get Started with AWS CDK](https://aws.amazon.com/getting-started/guides/setup-cdk/) to learn more.  |
 | 💻 Code Sample         | Code sample used in tutorial on [GitHub](https://github.com/build-on-aws/sample-python-web-app)                             |
 | 📢 Feedback            | <a href="https://pulse.buildon.aws/survey/DEM0H5VW" target="_blank">Any feedback, issues, or just a</a> 👍 / 👎 ?    |
-| ⏰ Last Updated        | 2023-04-11                                                      |
+| ⏰ Last Updated        | 2023-09-06                                                      |
 
 | ToC |
 |-----|
@@ -45,12 +45,13 @@ Manually setting up and configuring the packages required to run a Python web ap
 To deploy this web application we will be using AWS CDK to create and deploy the underlying infrastructure. This infrastructure will consist of an EC2 instance, a VPC, CI/CD pipeline, and accompanying resources required for it to operate (Security Groups and IAM permissions).
 
 ### Setting up the CDK project
+
 First, let's check if our CDK version is up to date — this guide is based on v2 of the CDK. If you are still using v1, please read through the [migration docs](https://docs.aws.amazon.com/cdk/v2/guide/migrating-v2.html?sc_channel=el&sc_campaign=devopswave&sc_content=cicdcdkpthnec2aws&sc_geo=mult&sc_country=mult&sc_outcome=acq). To check the version, run the following:
 
 ```bash
 cdk --version
 
-# 2.35.0 (build 85e2735)
+# 2.94.0 (build 987c329)
 ```
 
 If you see output showing `1.x.x`, or you just want to ensure you are on the latest version, run the following:
@@ -86,11 +87,10 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 Initializing a new git repository...
 Executing npm install...
-npm WARN deprecated w3c-hr-time@1.0.2: Use your platform's native performance.now() and performance.timeOrigin.
 npm notice 
-npm notice New patch version of npm available! 8.19.2 → 8.19.3
-npm notice Changelog: https://github.com/npm/cli/releases/tag/v8.19.3
-npm notice Run npm install -g npm@8.19.3 to update!
+npm notice New patch version of npm available! 9.2.0 -> 10.0.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v10.0.0
+npm notice Run npm install -g npm@10.0.0 to update!
 npm notice 
 ✅ All done!
 ```
@@ -196,7 +196,7 @@ We're now ready to create the EC2 instance using a pre-built [Amazon Machine Ima
     const webServer = new Instance(this, 'web_server',{
       vpc,
       instanceType: InstanceType.of(
-        InstanceClass.T2,
+        InstanceClass.T3,
         InstanceSize.MICRO,
       ),
       machineImage: ami,
@@ -248,7 +248,7 @@ Additionally, we will configure outputs to easily track down the EC2 instance's 
 
 We have now defined our AWS CDK stack to create an EC2 instance, a VPC, a security group with inbound access rules, and an IAM role, attached to the EC2 instance as an IAM instance profile. On top of that, we have tagged the EC2 instance and attached a user data script to it.
 
-> #### ✅ ✅ ✅  **Checkpoint 1**  ✅ ✅ ✅
+#### ✅ ✅ ✅  **Checkpoint 1**  ✅ ✅ ✅
 
 Your `lib/ec2-cdk-stack.ts` file should now look like this:
 
