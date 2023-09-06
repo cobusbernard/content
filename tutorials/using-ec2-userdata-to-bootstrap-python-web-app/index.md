@@ -248,7 +248,7 @@ Additionally, we will configure outputs to easily track down the EC2 instance's 
 
 We have now defined our AWS CDK stack to create an EC2 instance, a VPC, a security group with inbound access rules, and an IAM role, attached to the EC2 instance as an IAM instance profile. On top of that, we have tagged the EC2 instance and attached a user data script to it.
 
-#### ✅ ✅ ✅  **Checkpoint 1**  ✅ ✅ ✅
+## ✅ ✅ ✅  **Checkpoint 1**  ✅ ✅ ✅
 
 Your `lib/ec2-cdk-stack.ts` file should now look like this:
 
@@ -331,7 +331,7 @@ export class PythonEc2BlogpostStack extends cdk.Stack {
     const webServer = new Instance(this, 'web_server',{
       vpc,
       instanceType: InstanceType.of(
-        InstanceClass.T2,
+        InstanceClass.T3,
         InstanceSize.MICRO,
       ),
       machineImage: ami,
@@ -433,7 +433,7 @@ We will start with the `Source` stage, as here is where we connect the pipeline 
     const githubSourceAction = new GitHubSourceAction({
       actionName: 'GithubSource',
       oauthToken: SecretValue.secretsManager('github-oauth-token'), // MAKE SURE TO SET UP BEFORE
-      owner: 'darko-mesaros', // THIS NEEDS TO BE CHANGED TO YOUR OWN USER ID
+      owner: 'build-on-aws', // THIS NEEDS TO BE CHANGED TO YOUR OWN USER ID
       repo: 'sample-python-web-app',
       branch: 'main',
       output: sourceOutput,
@@ -448,7 +448,7 @@ On to the `Build` stage: we are not actually building anything, but rather testi
     // Build Action
     const pythonTestProject = new PipelineProject(this, 'pythonTestProject',{
       environment: {
-        buildImage: LinuxBuildImage.AMAZON_LINUX_2_3
+        buildImage: LinuxBuildImage.AMAZON_LINUX_2_4
       }
     });
 
@@ -480,7 +480,7 @@ And finally the `Deploy` stage: this stage uses CodeDeploy to deploy and configu
       ec2InstanceTags: new InstanceTagSet(
       {
         'application-name': ['python-web'],
-        'stage':['prod', 'stage']
+        'stage':['prod', 'staging', 'dev']
       })
     });
 
@@ -494,7 +494,7 @@ And finally the `Deploy` stage: this stage uses CodeDeploy to deploy and configu
     deployStage.addAction(pythonDeployAction);
 ```
 
-> #### ✅ ✅ ✅  **Checkpoint 2**  ✅ ✅ ✅
+## ✅ ✅ ✅  **Checkpoint 2**  ✅ ✅ ✅
 
 We have now completed all code changes to our CDK app, and the `lib/ec2-cdk-stack.ts` file should look like this:
 
@@ -637,7 +637,7 @@ export class PythonEc2BlogpostStack extends cdk.Stack {
     // Build Action
     const pythonTestProject = new PipelineProject(this, 'pythonTestProject', {
       environment: {
-        buildImage: LinuxBuildImage.AMAZON_LINUX_2_3
+        buildImage: LinuxBuildImage.AMAZON_LINUX_2_4
       }
     });
     
@@ -664,7 +664,7 @@ export class PythonEc2BlogpostStack extends cdk.Stack {
       ec2InstanceTags: new InstanceTagSet(
       {
         'application-name': ['python-web'],
-        'stage':['prod', 'stage']
+        'stage':['prod', 'staging', 'dev']
       })
     });
 
@@ -725,7 +725,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      python: 3.7
+      python: 3.9
     commands:
       - echo Entered the install phase...
       - pip install pipenv
